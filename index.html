@@ -20,8 +20,8 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-width: 900px;
-            box-sizing: border-box;
+            max-width: 900px; /* Maximum width to ensure responsiveness */
+            box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
         }
         .formatter-container {
             background-color: #2b2b2b;
@@ -32,8 +32,8 @@
             flex-direction: column;
             gap: 10px;
             width: 100%;
-            box-sizing: border-box;
-            overflow: hidden;
+            box-sizing: border-box; /* Ensure padding is included in the element's total width and height */
+            overflow: hidden; /* Prevent overflow of content */
         }
         .input-group {
             margin-bottom: 10px;
@@ -66,8 +66,7 @@
             width: 100%;
         }
         .formatter-container button {
-            width: 50%; /* Set the button to occupy half the width of the container */
-            align-self: center; /* Center the button horizontally */
+            width: 50%; /* Half width of the container */
             padding: 10px;
             border: none;
             border-radius: 4px;
@@ -76,6 +75,8 @@
             font-size: 16px;
             cursor: pointer;
             font-weight: 500;
+            margin-top: 10px;
+            align-self: center; /* Center horizontally within the container */
         }
         .formatter-container button:hover {
             background-color: #155ab6;
@@ -86,7 +87,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 100%;
-            box-sizing: border-box;
+            box-sizing: border-box; /* Ensure padding is included in the element's total width and height */
             margin-top: 20px;
             height: 90px; /* Fixed height to fit approximately 5 lines */
         }
@@ -97,12 +98,12 @@
             border-radius: 4px;
             background-color: #333;
             color: #f0f0f0;
-            white-space: pre-line;
-            box-sizing: border-box;
-            height: 100%;
+            white-space: pre-line; /* Preserve line breaks */
+            box-sizing: border-box; /* Ensure padding is included in the element's total width and height */
+            height: 100%; /* Ensure it takes full height of the container */
             display: flex;
-            align-items: center;
-            justify-content: flex-end;
+            align-items: center; /* Center vertically */
+            justify-content: flex-end; /* Align to the right */
         }
     </style>
 </head>
@@ -197,4 +198,51 @@
 
                 // Set placeholders for Japan to France
                 document.getElementById('name').placeholder = 'e.g. Jean Dupont';
-               
+                document.getElementById('line1').placeholder = 'e.g. 123 Rue de Paris';
+                document.getElementById('postal-code').placeholder = 'e.g. 75001';
+                document.getElementById('city').placeholder = 'e.g. Paris';
+                document.getElementById('prefecture').placeholder = ''; // Blank for Japan to France
+                document.getElementById('subarea-block').placeholder = ''; // Blank for Japan to France
+                document.getElementById('country').placeholder = 'e.g. France';
+
+                // Hide subarea block and prefecture, show placeholder space
+                document.getElementById('subarea-group').style.display = 'none';
+                document.getElementById('prefecture-group').style.display = 'none';
+                document.getElementById('line2-group').style.display = 'block';
+            }
+        }
+
+        // Initialize labels and placeholders based on default selection
+        window.onload = function() {
+            changeLabels();
+        };
+
+        function formatAddress() {
+            const conversionType = document.getElementById('conversion-type').value;
+            const name = document.getElementById('name').value.trim();
+            const line1 = document.getElementById('line1').value.trim();
+            const line2 = document.getElementById('line2') ? document.getElementById('line2').value.trim() : '';
+            const postalCode = document.getElementById('postal-code').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const prefecture = document.getElementById('prefecture') ? document.getElementById('prefecture').value.trim() : '';
+            const subareaBlock = document.getElementById('subarea-block') ? document.getElementById('subarea-block').value.trim() : '';
+            const country = document.getElementById('country').value.trim();
+
+            let formattedAddress = '';
+
+            if (conversionType === 'fr-to-jp') {
+                // Split name into last and first names for Japan
+                const nameParts = name.split(' ');
+                const lastName = nameParts.length > 0 ? nameParts[0] : '';
+                const firstName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+                formattedAddress = `〒${postalCode}\n${prefecture} ${city} ${subareaBlock} ${line1}\n${lastName} ${firstName} 様\n${country}`;
+            } else if (conversionType === 'jp-to-fr') {
+                formattedAddress = `${name}\n${line1}\n${line2}\n${postalCode} ${city}\n${country}`;
+            }
+
+            document.getElementById('formatted-address').textContent = formattedAddress.trim();
+        }
+    </script>
+</body>
+</html>
