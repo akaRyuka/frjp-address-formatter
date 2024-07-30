@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Formatter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #191919;
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+        }
+        .formatter-container {
+            background-color: #2b2b2b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .input-group {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .input-group input, select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #333;
+            color: #f0f0f0;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .input-group.double {
+            display: flex;
+            gap: 10px;
+        }
+        .input-group.double .input-container {
+            flex: 1;
+        }
+        .input-group.double .input-container input {
+            width: 100%;
+        }
+        .formatter-container button {
+            width: 50%; /* Set the button to occupy half the width of the container */
+            align-self: center; /* Center the button horizontally */
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #1a73e8;
+            color: #f0f0f0;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .formatter-container button:hover {
+            background-color: #155ab6;
+        }
+        .output-container {
+            background-color: #2b2b2b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 20px;
+            height: 90px; /* Fixed height to fit approximately 5 lines */
+        }
+        .output-group {
+            text-align: right;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #333;
+            color: #f0f0f0;
+            white-space: pre-line;
+            box-sizing: border-box;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="formatter-container">
+            <div class="input-group">
+                <label for="conversion-type">Conversion Type:</label>
+                <select id="conversion-type" onchange="changeLabels()">
+                    <option value="fr-to-jp">France to Japan</option>
+                    <option value="jp-to-fr">Japan to France</option>
+                </select>
+            </div>
+            <div class="input-group double" id="name-country-group">
+                <div class="input-container">
+                    <label for="name" id="label-name">Name (Last, First):</label>
+                    <input type="text" id="name" placeholder="e.g. 田中 太郎">
+                </div>
+                <div class="input-container">
+                    <label for="country" id="label-country">Country:</label>
+                    <input type="text" id="country" placeholder="e.g. 日本">
+                </div>
+            </div>
+            <div class="input-group double" id="postal-city-group">
+                <div class="input-container">
+                    <label for="postal-code" id="label-postal-code">Postal Code:</label>
+                    <input type="text" id="postal-code" placeholder="e.g. 170-3293">
+                </div>
+                <div class="input-container">
+                    <label for="city" id="label-city">City/Ward:</label>
+                    <input type="text" id="city" placeholder="e.g. 中央区">
+                </div>
+            </div>
+            <div class="input-group" id="prefecture-group">
+                <label for="prefecture" id="label-prefecture">Prefecture:</label>
+                <input type="text" id="prefecture" placeholder="e.g. 東京都">
+            </div>
+            <div class="input-group" id="subarea-group">
+                <label for="subarea-block" id="label-subarea-block">Subarea:</label>
+                <input type="text" id="subarea-block" placeholder="e.g. 銀座">
+            </div>
+            <div class="input-group" id="line1-group">
+                <label for="line1" id="label-line1">Subarea, Block, House No.:</label>
+                <input type="text" id="line1" placeholder="e.g. 5-2-1">
+            </div>
+            <div class="input-group" id="line2-group">
+                <label for="line2" id="label-line2">Further Address Details (Optional):</label>
+                <input type="text" id="line2" placeholder="e.g. Appartement, bâtiment, etc.">
+            </div>
+            <button onclick="formatAddress()">Format Address</button>
+        </div>
+        <div class="output-container">
+            <div class="output-group" id="formatted-address">
+                <!-- Formatted address will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeLabels() {
+            const conversionType = document.getElementById('conversion-type').value;
+            if (conversionType === 'fr-to-jp') {
+                document.getElementById('label-name').textContent = 'Name (Last, First):';
+                document.getElementById('label-line1').textContent = 'Subarea, Block, House No.:';
+                document.getElementById('label-postal-code').textContent = 'Postal Code:';
+                document.getElementById('label-city').textContent = 'City/Ward:';
+                document.getElementById('label-prefecture').textContent = 'Prefecture:';
+                document.getElementById('label-subarea-block').textContent = 'Subarea:';
+                document.getElementById('label-country').textContent = 'Country:';
+
+                // Set placeholders for France to Japan
+                document.getElementById('name').placeholder = 'e.g. 田中 太郎';
+                document.getElementById('line1').placeholder = 'e.g. 5-2-1';
+                document.getElementById('postal-code').placeholder = 'e.g. 170-3293';
+                document.getElementById('city').placeholder = 'e.g. 中央区';
+                document.getElementById('prefecture').placeholder = 'e.g. 東京都';
+                document.getElementById('subarea-block').placeholder = 'e.g. 銀座';
+                document.getElementById('country').placeholder = 'e.g. 日本';
+
+                // Show all relevant fields
+                document.getElementById('prefecture-group').style.display = 'block';
+                document.getElementById('subarea-group').style.display = 'block';
+                document.getElementById('line2-group').style.display = 'none';
+            } else if (conversionType === 'jp-to-fr') {
+                document.getElementById('label-name').textContent = 'Name:';
+                document.getElementById('label-line1').textContent = 'Street Address:';
+                document.getElementById('label-postal-code').textContent = 'Postal Code:';
+                document.getElementById('label-city').textContent = 'City:';
+                document.getElementById('label-prefecture').textContent = ''; // Blank for Japan to France
+                document.getElementById('label-subarea-block').textContent = ''; // Blank for Japan to France
+                document.getElementById('label-country').textContent = 'Country:';
+
+                // Set placeholders for Japan to France
+                document.getElementById('name').placeholder = 'e.g. Jean Dupont';
+               
